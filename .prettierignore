@@ -1,5 +1,6 @@
 dist
 node_modules
+frontend/convex/_generated
 .git
 *.min.js
 *.min.css

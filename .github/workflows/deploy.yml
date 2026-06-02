@@ -3,8 +3,7 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,31 +17,35 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'pnpm'
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build project
-        run: pnpm run build
+        run: npm run build
+        env:
+          # Set this repository variable (Settings -> Secrets and variables ->
+          # Actions -> Variables) to your Convex deployment URL, e.g.
+          # https://your-deployment.convex.cloud
+          VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist/public'
+          path: './frontend/dist'
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

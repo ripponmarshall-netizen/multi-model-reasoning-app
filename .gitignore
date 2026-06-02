@@ -1,10 +1,10 @@
 .env
-.venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-backend/forexcopilot.db
+.env.local
+node_modules/
 frontend/node_modules/
 frontend/dist/
-node_modules/
 *.tsbuildinfo
+
+# Convex local deployment config.
+# The generated API in frontend/convex/_generated IS committed.
+frontend/.env.local
